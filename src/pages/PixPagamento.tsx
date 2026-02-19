@@ -106,20 +106,8 @@ const PixPagamento = () => {
     toast.success("Código Pix copiado!");
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 text-gray-900">
-        <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <button onClick={() => navigate(-1)} className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors">‹</button>
-          <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
-        </header>
-        <div className="flex flex-col items-center justify-center mt-20 gap-4">
-          <div className="w-10 h-10 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-          <p className="text-gray-600 text-sm">Gerando Pix...</p>
-        </div>
-      </div>
-    );
-  }
+  const showQrLoading = loading;
+
 
   if (error) {
     return (
@@ -181,8 +169,13 @@ const PixPagamento = () => {
 
         {/* QR Code area */}
         <div className="flex justify-center mt-4">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            {transaction?.paymentData?.qrCodeBase64 ? (
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 w-56 h-56 flex items-center justify-center">
+            {showQrLoading ? (
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+                <p className="text-gray-500 text-xs">Gerando QR Code...</p>
+              </div>
+            ) : transaction?.paymentData?.qrCodeBase64 ? (
               <img
                 src={transaction.paymentData.qrCodeBase64}
                 alt="QR Code Pix"
