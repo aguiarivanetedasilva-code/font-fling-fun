@@ -95,7 +95,10 @@ const Debitos = () => {
           <div className="border-t border-gray-100 mx-5" />
           <div className="flex items-center justify-between px-5 py-4">
             <span className="text-gray-900 font-bold text-lg">R$ {selected ? "67,19" : "0,00"}</span>
-            <button className="bg-gray-900 text-lime-400 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-black transition-colors">
+            <button
+              onClick={() => navigate(`/pagamento?valor=${selected ? "67,19" : "0,00"}`)}
+              className="bg-gray-900 text-lime-400 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-black transition-colors"
+            >
               Continuar
             </button>
           </div>
