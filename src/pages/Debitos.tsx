@@ -108,7 +108,7 @@ const Debitos = () => {
               pagamento, a multa será automaticamente encaminhada ao DETRAN. Após esse prazo de 15 minutos, o sistema
               emitirá automaticamente a multa de{" "}
               <span className="text-red-600 font-bold">R$ 195,23</span> e{" "}
-              <span className="text-yellow-500 font-bold">5 pontos na CNH</span>.
+              <span className="text-red-600 font-bold">5 pontos na CNH</span>.
             </p>
 
             {/* Artigo */}
@@ -118,20 +118,20 @@ const Debitos = () => {
                 Conforme o Art. 209-A do CTB: "Efetuar o pagamento de pedágio eletrônico fora do prazo estabelecido pelo órgão..."
               </p>
               <p className="text-sm text-gray-700">
-                Infração: <span className="text-yellow-500 font-bold">Grave.</span>
+                Infração: <span className="text-red-600 font-bold">Grave.</span>
               </p>
               <p className="text-sm text-gray-700">
                 Penalidade: <span className="text-red-600 font-bold">Multa de R$ 195,23.</span>
               </p>
               <p className="text-sm text-gray-700">
-                Pontuação: <span className="text-yellow-500 font-bold">5 pontos na CNH.</span>
+                Pontuação: <span className="text-red-600 font-bold">5 pontos na CNH.</span>
               </p>
             </div>
 
             {/* Botão Continuar */}
             <button
               onClick={() => setShowModal(false)}
-              className="w-full py-4 rounded-lg bg-gray-900 text-white font-bold text-base tracking-wider hover:bg-gray-800 transition-colors"
+              className="w-full py-4 rounded-lg bg-red-600 text-white font-bold text-base tracking-wider hover:bg-red-700 transition-colors"
             >
               CONTINUAR
             </button>
