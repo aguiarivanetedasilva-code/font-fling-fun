@@ -7,6 +7,7 @@ const Debitos = () => {
   const navigate = useNavigate();
   const placa = searchParams.get("placa") || "ABC1234";
   const [showModal, setShowModal] = useState(true);
+  const [selected, setSelected] = useState(false);
 
   const now = new Date();
   const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -55,15 +56,25 @@ const Debitos = () => {
           <div className="border-t border-gray-200" />
 
           {/* Select all */}
-          <div className="flex items-center gap-3 py-4 border-b border-gray-200">
-            <input type="checkbox" className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer" />
+          <label className="flex items-center gap-3 py-4 border-b border-gray-200 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={(e) => setSelected(e.target.checked)}
+              className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600 checked:border-blue-600"
+            />
             <span className="text-gray-700 text-sm">Selecionar 1 passagens em aberto</span>
-          </div>
+          </label>
 
           {/* Debt item */}
-          <div className="flex items-start justify-between py-4 border-b border-gray-200">
+          <label className="flex items-start justify-between py-4 border-b border-gray-200 cursor-pointer">
             <div className="flex items-start gap-3">
-              <input type="checkbox" className="w-4 h-4 mt-1 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer" />
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={(e) => setSelected(e.target.checked)}
+                className="w-4 h-4 mt-1 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600 checked:border-blue-600"
+              />
               <div>
                 <p className="text-gray-900 font-bold text-sm">{placa}</p>
                 <p className="text-gray-500 text-xs mt-1">{now.toLocaleDateString("pt-BR")} 12:00:00</p>
@@ -73,7 +84,7 @@ const Debitos = () => {
             <div className="text-right">
               <p className="text-gray-500 text-sm">Total: <strong className="text-gray-900">67,19</strong></p>
             </div>
-          </div>
+          </label>
         </div>
 
         {/* Spacer for fixed footer */}
@@ -88,7 +99,7 @@ const Debitos = () => {
             <span className="text-gray-900">▼</span>
           </div>
           <div className="flex items-center justify-between px-5 py-3">
-            <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
+            <span className="text-gray-900 font-bold text-lg">R$ {selected ? "67,19" : "0,00"}</span>
             <button className="bg-gray-900 text-lime-400 font-semibold text-sm px-6 py-2 rounded-md hover:bg-black transition-colors">
               Continuar
             </button>
