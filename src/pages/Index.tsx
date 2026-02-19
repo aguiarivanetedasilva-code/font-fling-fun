@@ -35,8 +35,8 @@ const SearchCard = () => {
   const [privacidade, setPrivacidade] = useState(false);
 
   return (
-    <div className="bg-card rounded-xl p-7 shadow-2xl w-full max-w-sm">
-      <p className="text-card-foreground text-base mb-6">
+    <div className="bg-card rounded-xl p-10 shadow-2xl w-full max-w-md">
+      <p className="text-card-foreground text-lg mb-8">
         Um <strong>único</strong> lugar para <strong>acessar</strong> e{" "}
         <strong>controlar</strong> seus pagamentos.
       </p>
@@ -46,18 +46,18 @@ const SearchCard = () => {
         placeholder="DIGITE SUA PLACA"
         value={placa}
         onChange={(e) => setPlaca(e.target.value.toUpperCase())}
-        className="w-full px-4 py-3 rounded-md border border-border bg-input text-card-foreground placeholder:text-muted-foreground text-sm font-semibold tracking-widest mb-5 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full px-5 py-4 rounded-md border border-border bg-input text-card-foreground placeholder:text-muted-foreground text-base font-semibold tracking-widest mb-8 focus:outline-none focus:ring-2 focus:ring-primary"
         maxLength={7}
       />
 
-      <label className="flex items-start gap-3 mb-3 cursor-pointer">
+      <label className="flex items-start gap-3 mb-5 cursor-pointer">
         <input
           type="checkbox"
           checked={termos}
           onChange={(e) => setTermos(e.target.checked)}
-          className="mt-0.5 w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
+          className="mt-0.5 w-5 h-5 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
         />
-        <span className="text-card-foreground text-xs leading-relaxed">
+        <span className="text-card-foreground text-sm leading-relaxed">
           Aceito os{" "}
           <a href="#" className="underline font-semibold hover:text-primary">
             Termos e Condições de Uso
@@ -66,14 +66,14 @@ const SearchCard = () => {
         </span>
       </label>
 
-      <label className="flex items-start gap-3 mb-6 cursor-pointer">
+      <label className="flex items-start gap-3 mb-10 cursor-pointer">
         <input
           type="checkbox"
           checked={privacidade}
           onChange={(e) => setPrivacidade(e.target.checked)}
-          className="mt-0.5 w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
+          className="mt-0.5 w-5 h-5 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
         />
-        <span className="text-card-foreground text-xs leading-relaxed">
+        <span className="text-card-foreground text-sm leading-relaxed">
           Estou ciente da{" "}
           <a href="#" className="underline font-semibold hover:text-primary">
             Política de Privacidade
@@ -82,13 +82,13 @@ const SearchCard = () => {
         </span>
       </label>
 
-      <button className="w-full py-3 rounded-md bg-muted text-muted-foreground font-semibold text-sm hover:bg-primary hover:text-primary-foreground transition-colors mb-4">
+      <button className="w-full py-4 rounded-md bg-muted text-muted-foreground font-semibold text-base hover:bg-primary hover:text-primary-foreground transition-colors mb-6">
         Buscar débitos
       </button>
 
       <a
         href="#"
-        className="block text-center text-card-foreground text-sm font-semibold underline hover:text-primary transition-colors"
+        className="block text-center text-card-foreground text-base font-semibold underline hover:text-primary transition-colors"
       >
         Começar agora
       </a>
