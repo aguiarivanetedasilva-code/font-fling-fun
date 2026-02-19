@@ -1,14 +1,84 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+interface PaymentData {
+  qrCode: string;
+  qrCodeBase64: string;
+  copyPaste: string;
+  expiresAt: string;
+}
+
+interface TransactionResult {
+  transactionId: string;
+  status: string;
+  paymentData: PaymentData;
+}
 
 const PixPagamento = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const valor = searchParams.get("valor") || "0,00";
   const placa = searchParams.get("placa") || "ABC1234";
+  const nome = searchParams.get("nome") || "";
+  const email = searchParams.get("email") || "";
+  const telefone = searchParams.get("telefone") || "";
+  const cpf = searchParams.get("cpf") || "";
 
-  const pixCode = "00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540" + valor.replace(",", ".") + "5802BR5925CONCESSIONARIA EXEMPLO6009SAO PAULO62070503***6304ABCD";
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [transaction, setTransaction] = useState<TransactionResult | null>(null);
+
+  // Convert valor string "67,19" to cents integer 6719
+  const amountInCents = Math.round(
+    parseFloat(valor.replace(".", "").replace(",", ".")) * 100
+  );
+
+  useEffect(() => {
+    const createPayment = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const { data, error: fnError } = await supabase.functions.invoke(
+          "create-pix-payment",
+          {
+            body: {
+              amount: amountInCents,
+              customerName: nome,
+              customerEmail: email,
+              customerPhone: telefone,
+              customerDocument: cpf,
+              placa,
+            },
+          }
+        );
+
+        if (fnError) {
+          throw new Error(fnError.message || "Erro ao criar pagamento");
+        }
+
+        if (!data?.success) {
+          throw new Error(data?.message || "Erro ao criar pagamento");
+        }
+
+        setTransaction(data.data);
+      } catch (err: any) {
+        console.error("Payment error:", err);
+        setError(err.message || "Erro ao gerar o Pix. Tente novamente.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (nome && email && cpf) {
+      createPayment();
+    } else {
+      setError("Dados do pagador incompletos. Volte e preencha o formulário.");
+      setLoading(false);
+    }
+  }, []);
 
   // Countdown timer
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
@@ -29,10 +99,45 @@ const PixPagamento = () => {
   const now = new Date();
   const vencimento = now.toLocaleDateString("pt-BR");
 
+  const pixCode = transaction?.paymentData?.copyPaste || "";
+
   const handleCopy = () => {
+    if (!pixCode) return;
     navigator.clipboard.writeText(pixCode);
     toast.success("Código Pix copiado!");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 text-gray-900">
+        <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <button onClick={() => navigate(-1)} className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors">‹</button>
+          <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
+        </header>
+        <div className="flex flex-col items-center justify-center mt-20 gap-4">
+          <div className="w-10 h-10 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
+          <p className="text-gray-600 text-sm">Gerando Pix...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 text-gray-900">
+        <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <button onClick={() => navigate(-1)} className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors">‹</button>
+          <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
+        </header>
+        <div className="flex flex-col items-center justify-center mt-20 gap-4 px-6 text-center">
+          <span className="text-4xl">❌</span>
+          <p className="text-gray-900 font-bold text-lg">Erro ao gerar Pix</p>
+          <p className="text-gray-600 text-sm">{error}</p>
+          <button onClick={() => navigate(-1)} className="mt-4 px-6 py-3 bg-gray-950 text-white rounded-xl font-bold">Voltar</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
@@ -78,11 +183,19 @@ const PixPagamento = () => {
         {/* QR Code area */}
         <div className="flex justify-center mt-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pixCode)}`}
-              alt="QR Code Pix"
-              className="w-44 h-44"
-            />
+            {transaction?.paymentData?.qrCodeBase64 ? (
+              <img
+                src={transaction.paymentData.qrCodeBase64}
+                alt="QR Code Pix"
+                className="w-44 h-44"
+              />
+            ) : (
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pixCode)}`}
+                alt="QR Code Pix"
+                className="w-44 h-44"
+              />
+            )}
           </div>
         </div>
 
