@@ -8,6 +8,7 @@ const Debitos = () => {
   const placa = searchParams.get("placa") || "ABC1234";
   const [showModal, setShowModal] = useState(true);
   const [selected, setSelected] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   const now = new Date();
   const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -85,23 +86,60 @@ const Debitos = () => {
         <div className="h-40" />
       </div>
 
-      {/* Total a pagar - fixed bottom */}
+      {/* Fixed bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-40 flex justify-center px-4 pb-6">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-3xl">
-          <div className="flex items-center justify-between px-5 py-4 cursor-pointer">
-            <span className="text-gray-500 text-sm">Total a pagar:</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="m6 9 6 6 6-6"/></svg>
-          </div>
-          <div className="border-t border-gray-100 mx-5" />
-          <div className="flex items-center justify-between px-5 py-4">
-            <span className="text-gray-900 font-bold text-lg">R$ {selected ? "67,19" : "0,00"}</span>
-            <button
-              onClick={() => navigate(`/pagamento?valor=${selected ? "67,19" : "0,00"}&placa=${placa}`)}
-              className="bg-gray-900 text-lime-400 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-black transition-colors"
-            >
-              Continuar
-            </button>
-          </div>
+        <div className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-3xl">
+          {!showPayment ? (
+            <>
+              <div className="flex items-center justify-between px-5 py-4 cursor-pointer">
+                <span className="text-gray-500 text-sm">Total a pagar:</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <div className="border-t border-gray-100 mx-5" />
+              <div className="flex items-center justify-between px-5 py-4">
+                <span className="text-gray-900 font-bold text-lg">R$ {selected ? "67,19" : "0,00"}</span>
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="bg-gray-900 text-lime-400 font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-black transition-colors"
+                >
+                  Continuar
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="px-5 py-5">
+              <h3 className="text-gray-900 font-bold text-lg mb-3">Forma de pagamento</h3>
+              <button
+                onClick={() => {
+                  const valor = selected ? "67,19" : "0,00";
+                  const params = new URLSearchParams({
+                    valor,
+                    placa,
+                    nome: "Pedagio Digital LTDA.",
+                    email: "pagamento@pedagiodigital.com",
+                    telefone: "11999999999",
+                    cpf: "26208784620",
+                  });
+                  navigate(`/pix?${params.toString()}`);
+                }}
+                className="w-full flex items-center gap-4 py-4 px-4 bg-gray-50 border border-gray-200 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-lg bg-lime-400 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-900">
+                    <path d="M13.17 6.17L17 2l4 4-3.83 3.83" />
+                    <path d="M10.83 17.83L7 22l-4-4 3.83-3.83" />
+                    <path d="M6.17 6.17L2 10l4.83 4.83" />
+                    <path d="M17.83 17.83L22 14l-4.83-4.83" />
+                    <path d="m10 10 4 4" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <p className="text-gray-900 font-semibold text-sm">Pix</p>
+                  <p className="text-gray-500 text-xs">Pagamento instantâneo</p>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
