@@ -171,10 +171,7 @@ const PixPagamento = () => {
         <div className="flex justify-center mt-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 w-56 h-56 flex items-center justify-center">
             {showQrLoading ? (
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin" />
-                <p className="text-gray-500 text-xs">Gerando QR Code...</p>
-              </div>
+              <div className="w-44 h-44 bg-gray-100 rounded animate-pulse" />
             ) : transaction?.paymentData?.qrCodeBase64 ? (
               <img
                 src={transaction.paymentData.qrCodeBase64}
