@@ -53,12 +53,15 @@ const SearchCard = () => {
       />
 
       <label className="flex items-start gap-3 mb-5 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={termos}
-          onChange={(e) => setTermos(e.target.checked)}
-          className="mt-0.5 w-5 h-5 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
-        />
+        <div className="relative mt-0.5 shrink-0">
+          <input
+            type="checkbox"
+            checked={termos}
+            onChange={(e) => setTermos(e.target.checked)}
+            className="peer w-6 h-6 appearance-none border-2 border-gray-800 rounded bg-white checked:bg-gray-900 checked:border-gray-900 cursor-pointer"
+          />
+          <svg className="absolute inset-0 w-6 h-6 pointer-events-none hidden peer-checked:block text-white p-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
         <span className="text-card-foreground text-sm leading-relaxed">
           Aceito os{" "}
           <a href="#" className="underline font-semibold hover:text-primary">
@@ -69,12 +72,15 @@ const SearchCard = () => {
       </label>
 
       <label className="flex items-start gap-3 mb-10 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={privacidade}
-          onChange={(e) => setPrivacidade(e.target.checked)}
-          className="mt-0.5 w-5 h-5 appearance-none border border-gray-300 rounded-sm bg-white checked:bg-primary checked:border-primary cursor-pointer shrink-0"
-        />
+        <div className="relative mt-0.5 shrink-0">
+          <input
+            type="checkbox"
+            checked={privacidade}
+            onChange={(e) => setPrivacidade(e.target.checked)}
+            className="peer w-6 h-6 appearance-none border-2 border-gray-800 rounded bg-white checked:bg-gray-900 checked:border-gray-900 cursor-pointer"
+          />
+          <svg className="absolute inset-0 w-6 h-6 pointer-events-none hidden peer-checked:block text-white p-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
         <span className="text-card-foreground text-sm leading-relaxed">
           Estou ciente da{" "}
           <a href="#" className="underline font-semibold hover:text-primary">
