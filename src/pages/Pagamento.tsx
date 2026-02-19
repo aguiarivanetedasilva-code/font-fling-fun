@@ -7,7 +7,7 @@ const Pagamento = () => {
   const valor = searchParams.get("valor") || "0,00";
   const placa = searchParams.get("placa") || "ABC1234";
 
-  const [nome, setNome] = useState("");
+  const [nome, setNome] = useState("Pedagio Digital LTDA.");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
