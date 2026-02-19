@@ -75,8 +75,7 @@ const PixPagamento = () => {
     if (nome && email && cpf) {
       createPayment();
     } else {
-      setError("Dados do pagador incompletos. Volte e preencha o formulário.");
-      setLoading(false);
+      navigate(`/pagamento?valor=${valor}&placa=${placa}`, { replace: true });
     }
   }, []);
 
