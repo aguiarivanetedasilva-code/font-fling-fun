@@ -10,7 +10,7 @@ const Pagamento = () => {
   const [nome, setNome] = useState("Pedagio Digital LTDA.");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [cpf, setCpf] = useState("262.087.846-20");
 
   const handleContinue = () => {
     if (!nome || !email || !telefone || !cpf) return;
