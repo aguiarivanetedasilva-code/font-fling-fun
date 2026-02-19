@@ -76,19 +76,22 @@ const Debitos = () => {
           </div>
         </div>
 
-        {/* Total a pagar - fixed bottom style */}
-        <div className="px-6 mt-12 mb-8">
-          <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
-            <div className="flex items-center justify-between px-5 py-4 cursor-pointer border-b border-gray-100">
-              <span className="text-gray-900 font-semibold text-sm">Total a pagar:</span>
-              <span className="text-gray-900">✓</span>
-            </div>
-            <div className="flex items-center justify-between px-5 py-4">
-              <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
-              <button className="bg-gray-900 text-lime-400 font-semibold text-sm px-6 py-2 rounded-md hover:bg-black transition-colors">
-                Continuar
-              </button>
-            </div>
+        {/* Spacer for fixed footer */}
+        <div className="h-40" />
+      </div>
+
+      {/* Total a pagar - fixed bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 flex justify-center px-4 pb-6">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-2xl w-full max-w-3xl">
+          <div className="flex items-center justify-between px-5 py-3 cursor-pointer border-b border-gray-100">
+            <span className="text-gray-900 font-semibold text-sm">Total a pagar:</span>
+            <span className="text-gray-900">▼</span>
+          </div>
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
+            <button className="bg-gray-900 text-lime-400 font-semibold text-sm px-6 py-2 rounded-md hover:bg-black transition-colors">
+              Continuar
+            </button>
           </div>
         </div>
       </div>
