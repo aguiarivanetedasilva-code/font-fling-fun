@@ -131,7 +131,7 @@ const Debitos = () => {
             {/* Botão Continuar */}
             <button
               onClick={() => setShowModal(false)}
-              className="w-full py-4 rounded-lg bg-red-700 text-white font-bold text-base tracking-wider hover:bg-red-800 transition-colors"
+              className="w-full py-4 rounded-xl bg-gray-950 text-lime-400 font-bold text-base tracking-wider hover:bg-black transition-colors"
             >
               CONTINUAR
             </button>
