@@ -118,13 +118,13 @@ const Debitos = () => {
                 Conforme o Art. 209-A do CTB: "Efetuar o pagamento de pedágio eletrônico fora do prazo estabelecido pelo órgão..."
               </p>
               <p className="text-sm text-gray-700">
-                Infração: <span className="text-amber-600 font-bold">Grave.</span>
+                Infração: <span className="text-red-600 font-bold">Grave.</span>
               </p>
               <p className="text-sm text-gray-700">
-                Penalidade: <span className="text-red-700 font-bold">Multa de R$ 195,23.</span>
+                Penalidade: <span className="text-red-600 font-bold">Multa de R$ 195,23.</span>
               </p>
               <p className="text-sm text-gray-700">
-                Pontuação: <span className="text-amber-600 font-bold">5 pontos na CNH.</span>
+                Pontuação: <span className="text-red-600 font-bold">5 pontos na CNH.</span>
               </p>
             </div>
 
