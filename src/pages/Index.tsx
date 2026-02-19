@@ -55,7 +55,7 @@ const SearchCard = () => {
           type="checkbox"
           checked={termos}
           onChange={(e) => setTermos(e.target.checked)}
-          className="mt-1 w-4 h-4 accent-primary rounded"
+          className="mt-0.5 w-5 h-5 appearance-none border-2 border-muted-foreground rounded bg-background checked:bg-primary checked:border-primary cursor-pointer"
         />
         <span className="text-card-foreground text-xs leading-relaxed">
           Aceito os{" "}
@@ -71,7 +71,7 @@ const SearchCard = () => {
           type="checkbox"
           checked={privacidade}
           onChange={(e) => setPrivacidade(e.target.checked)}
-          className="mt-1 w-4 h-4 accent-primary rounded"
+          className="mt-0.5 w-5 h-5 appearance-none border-2 border-muted-foreground rounded bg-background checked:bg-primary checked:border-primary cursor-pointer"
         />
         <span className="text-card-foreground text-xs leading-relaxed">
           Estou ciente da{" "}
