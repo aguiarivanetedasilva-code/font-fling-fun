@@ -14,16 +14,16 @@ const Debitos = () => {
   const hora = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
-      <header className="flex items-center justify-center relative px-6 py-4 border-b border-border">
+      <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-white">
         <button
           onClick={() => navigate("/")}
-          className="absolute left-6 text-foreground text-2xl font-bold hover:text-primary transition-colors"
+          className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors"
         >
           ‹
         </button>
-        <h1 className="text-foreground font-bold text-lg">Débitos</h1>
+        <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
       </header>
 
       {/* Banner */}
@@ -38,31 +38,31 @@ const Debitos = () => {
 
       {/* Placa */}
       <div className="px-6 py-4">
-        <div className="bg-card border border-border rounded-lg px-4 py-3 inline-block">
-          <span className="text-card-foreground font-bold text-sm tracking-widest">{placa}</span>
+        <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 inline-block">
+          <span className="text-gray-900 font-bold text-sm tracking-widest">{placa}</span>
         </div>
       </div>
 
       {/* Tabela de débitos */}
       <div className="px-6">
-        <div className="border border-border rounded-lg overflow-hidden">
-          <div className="grid grid-cols-4 bg-muted px-4 py-3 text-muted-foreground text-xs font-semibold">
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-4 bg-gray-50 px-4 py-3 text-gray-500 text-xs font-semibold">
             <span>Débitos</span>
             <span>Selecionar</span>
             <span></span>
             <span className="text-right">{now.toLocaleDateString("pt-BR")} - {hora}</span>
           </div>
-          <div className="grid grid-cols-4 items-center px-4 py-4 border-t border-border">
+          <div className="grid grid-cols-4 items-center px-4 py-4 border-t border-gray-200 bg-white">
             <div className="col-span-1">
-              <input type="checkbox" className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer" />
+              <input type="checkbox" className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600" />
             </div>
             <div className="col-span-2">
-              <p className="text-card-foreground font-bold text-sm">{placa}</p>
-              <p className="text-muted-foreground text-xs">19/02/2025</p>
-              <p className="text-muted-foreground text-xs">CCR</p>
+              <p className="text-gray-900 font-bold text-sm">{placa}</p>
+              <p className="text-gray-500 text-xs">19/02/2025</p>
+              <p className="text-gray-500 text-xs">CCR</p>
             </div>
             <div className="text-right">
-              <p className="text-muted-foreground text-xs">Total: <strong className="text-card-foreground">67,19</strong></p>
+              <p className="text-gray-500 text-xs">Total: <strong className="text-gray-900">67,19</strong></p>
             </div>
           </div>
         </div>
@@ -70,14 +70,14 @@ const Debitos = () => {
 
       {/* Total a pagar */}
       <div className="px-6 mt-6">
-        <div className="border border-border rounded-lg">
+        <div className="border border-gray-200 rounded-lg bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-3 cursor-pointer">
-            <span className="text-card-foreground font-semibold text-sm">Total a pagar:</span>
-            <span className="text-card-foreground text-lg">▼</span>
+            <span className="text-gray-900 font-semibold text-sm">Total a pagar:</span>
+            <span className="text-gray-900 text-lg">▼</span>
           </div>
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-            <span className="text-card-foreground font-bold text-lg">R$ 0,00</span>
-            <button className="border border-foreground text-foreground font-semibold text-sm px-6 py-2 rounded-md hover:bg-foreground hover:text-background transition-colors">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+            <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
+            <button className="border border-gray-900 text-gray-900 font-semibold text-sm px-6 py-2 rounded-md hover:bg-gray-900 hover:text-white transition-colors">
               Continuar
             </button>
           </div>
@@ -117,13 +117,13 @@ const Debitos = () => {
               <p className="text-gray-500 text-xs mb-3">
                 Conforme o Art. 209-A do CTB: "Efetuar o pagamento de pedágio eletrônico fora do prazo estabelecido pelo órgão..."
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 Infração: <span className="text-yellow-500 font-bold">Grave.</span>
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 Penalidade: <span className="text-red-600 font-bold">Multa de R$ 195,23.</span>
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 Pontuação: <span className="text-yellow-500 font-bold">5 pontos na CNH.</span>
               </p>
             </div>
