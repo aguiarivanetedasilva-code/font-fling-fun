@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-bg.png";
 
 const Header = () => (
   <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-5 lg:px-16">
