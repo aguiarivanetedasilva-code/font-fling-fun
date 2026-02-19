@@ -91,8 +91,9 @@ const SearchCard = () => {
       </label>
 
       <button
-        onClick={() => placa && navigate(`/debitos?placa=${encodeURIComponent(placa)}`)}
-        className="w-full py-4 rounded-md bg-muted text-muted-foreground font-semibold text-base hover:bg-primary hover:text-primary-foreground transition-colors mb-6"
+        onClick={() => placa && termos && privacidade && navigate(`/debitos?placa=${encodeURIComponent(placa)}`)}
+        disabled={!termos || !privacidade}
+        className={`w-full py-4 rounded-md font-semibold text-base transition-colors mb-6 ${termos && privacidade ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-muted text-muted-foreground cursor-not-allowed'}`}
       >
         Buscar débitos
       </button>
