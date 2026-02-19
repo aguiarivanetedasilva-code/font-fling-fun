@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.png";
 
 const Header = () => (
-  <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 py-5 lg:px-16">
-    <div className="flex items-center gap-3">
-      <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-        <span className="text-primary-foreground font-black text-xl">P</span>
+  <header className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-4 sm:px-8 sm:py-5 lg:px-16">
+    <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-primary">
+        <span className="text-primary-foreground font-black text-lg sm:text-xl">P</span>
       </div>
       <div className="leading-tight">
-        <span className="text-foreground font-extrabold text-lg block">Pedágio</span>
-        <span className="text-primary font-extrabold text-lg block -mt-1">Digital</span>
+        <span className="text-foreground font-extrabold text-base sm:text-lg block">Pedágio</span>
+        <span className="text-primary font-extrabold text-base sm:text-lg block -mt-1">Digital</span>
       </div>
     </div>
     <nav className="hidden md:flex items-center gap-6">
@@ -37,7 +37,7 @@ const SearchCard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-card rounded-xl p-10 shadow-2xl w-full max-w-md">
+    <div className="bg-card rounded-xl p-6 sm:p-10 shadow-2xl w-full max-w-md">
       <p className="text-card-foreground text-lg mb-8">
         Um <strong>único</strong> lugar para <strong>acessar</strong> e{" "}
         <strong>controlar</strong> seus pagamentos.
@@ -124,9 +124,9 @@ const Index = () => {
       <Header />
 
       {/* Hero */}
-      <main className="relative z-10 flex flex-col lg:flex-row items-center justify-between min-h-screen px-8 lg:px-16 pt-28 pb-16 gap-12">
+      <main className="relative z-10 flex flex-col lg:flex-row items-center justify-between min-h-screen px-4 sm:px-8 lg:px-16 pt-24 sm:pt-28 pb-8 sm:pb-16 gap-8 sm:gap-12">
         <div className="max-w-xl">
-          <h1 className="text-foreground text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-6">
+          <h1 className="text-foreground text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 sm:mb-6">
             DESFRUTE DE TODA A COMODIDADE DO PEDÁGIO{" "}
             <span className="text-primary">DIGITAL</span>
           </h1>
