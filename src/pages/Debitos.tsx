@@ -57,24 +57,18 @@ const Debitos = () => {
 
           {/* Select all */}
           <label className="flex items-center gap-3 py-4 border-b border-gray-200 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={selected}
-              onChange={(e) => setSelected(e.target.checked)}
-              className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600 checked:border-blue-600"
-            />
+            <div className="w-5 h-5 border-2 border-gray-400 rounded flex items-center justify-center bg-white cursor-pointer" onClick={() => setSelected(!selected)}>
+              {selected && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-800"><path d="M20 6 9 17l-5-5"/></svg>}
+            </div>
             <span className="text-gray-700 text-sm">Selecionar 1 passagens em aberto</span>
           </label>
 
           {/* Debt item */}
           <label className="flex items-start justify-between py-4 border-b border-gray-200 cursor-pointer">
             <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                checked={selected}
-                onChange={(e) => setSelected(e.target.checked)}
-                className="w-4 h-4 mt-1 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600 checked:border-blue-600"
-              />
+              <div className="w-5 h-5 mt-1 border-2 border-gray-400 rounded flex items-center justify-center bg-white cursor-pointer shrink-0" onClick={() => setSelected(!selected)}>
+                {selected && <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-800"><path d="M20 6 9 17l-5-5"/></svg>}
+              </div>
               <div>
                 <p className="text-gray-900 font-bold text-sm">{placa}</p>
                 <p className="text-gray-500 text-xs mt-1">{now.toLocaleDateString("pt-BR")} 12:00:00</p>
