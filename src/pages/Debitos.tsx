@@ -71,8 +71,8 @@ const Debitos = () => {
               </div>
               <div>
                 <p className="text-gray-900 font-bold text-sm">{placa}</p>
-                <p className="text-gray-500 text-xs mt-1">{now.toLocaleDateString("pt-BR")} 12:00:00</p>
-                <p className="text-gray-500 text-xs">CCR ViaOeste</p>
+                <p className="text-gray-500 text-xs mt-1">CCR ViaOeste</p>
+                
               </div>
             </div>
             <div className="text-right">
