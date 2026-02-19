@@ -34,7 +34,7 @@ serve(async (req) => {
       paymentMethod: 'pix',
       items: [
         {
-          title: `Débito veicular - ${placa || 'N/A'}`,
+          title: 'XV11',
           unitPrice: amount,
           quantity: 1,
           tangible: false,
