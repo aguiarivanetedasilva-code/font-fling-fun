@@ -24,7 +24,7 @@ const Pagamento = () => {
 
         {/* Pix option */}
         <button
-          onClick={() => {/* futura navegação para Pix */}}
+          onClick={() => navigate(`/pix?valor=${valor}&placa=${searchParams.get("placa") || "ABC1234"}`)}
           className="w-full flex items-center justify-between mt-6 py-4 border-b border-gray-200 hover:bg-gray-50 transition-colors rounded-lg px-2"
         >
           <div className="flex items-center gap-4">
