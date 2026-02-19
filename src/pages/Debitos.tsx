@@ -146,7 +146,7 @@ const Debitos = () => {
       {/* Modal de Atenção */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg mx-4 mb-0 sm:mb-0 p-8 relative">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-lg mx-0 sm:mx-4 mb-0 p-5 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             {/* Handle */}
             <div className="flex justify-center mb-4">
               <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
