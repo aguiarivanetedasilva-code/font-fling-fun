@@ -35,7 +35,7 @@ const SearchCard = () => {
   const [privacidade, setPrivacidade] = useState(false);
 
   return (
-    <div className="bg-card rounded-xl p-8 shadow-2xl w-full max-w-md">
+    <div className="bg-card rounded-xl p-10 shadow-2xl w-full max-w-md min-h-[520px] flex flex-col justify-between">
       <p className="text-card-foreground text-base mb-6">
         Um <strong>único</strong> lugar para <strong>acessar</strong> e{" "}
         <strong>controlar</strong> seus pagamentos.
