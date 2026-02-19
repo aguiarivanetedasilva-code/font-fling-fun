@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Header = () => (
@@ -33,6 +34,7 @@ const SearchCard = () => {
   const [placa, setPlaca] = useState("");
   const [termos, setTermos] = useState(false);
   const [privacidade, setPrivacidade] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="bg-card rounded-xl p-10 shadow-2xl w-full max-w-md">
@@ -82,7 +84,10 @@ const SearchCard = () => {
         </span>
       </label>
 
-      <button className="w-full py-4 rounded-md bg-muted text-muted-foreground font-semibold text-base hover:bg-primary hover:text-primary-foreground transition-colors mb-6">
+      <button
+        onClick={() => placa && navigate(`/debitos?placa=${encodeURIComponent(placa)}`)}
+        className="w-full py-4 rounded-md bg-muted text-muted-foreground font-semibold text-base hover:bg-primary hover:text-primary-foreground transition-colors mb-6"
+      >
         Buscar débitos
       </button>
 
