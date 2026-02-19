@@ -106,8 +106,36 @@ const PixPagamento = () => {
     toast.success("Código Pix copiado!");
   };
 
-  const showQrLoading = loading;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
+        {/* Pulsing Pix icon */}
+        <div className="relative mb-8">
+          <div className="w-24 h-24 rounded-2xl bg-lime-400 flex items-center justify-center animate-pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-900">
+              <path d="M13.17 6.17L17 2l4 4-3.83 3.83" />
+              <path d="M10.83 17.83L7 22l-4-4 3.83-3.83" />
+              <path d="M6.17 6.17L2 10l4.83 4.83" />
+              <path d="M17.83 17.83L22 14l-4.83-4.83" />
+              <path d="m10 10 4 4" />
+            </svg>
+          </div>
+          {/* Ripple rings */}
+          <div className="absolute inset-0 w-24 h-24 rounded-2xl border-2 border-lime-400/40 animate-ping" />
+        </div>
 
+        <h2 className="text-white font-bold text-xl mb-2 animate-fade-in">Gerando seu Pix...</h2>
+        <p className="text-gray-400 text-sm text-center animate-fade-in">Estamos conectando com o banco para gerar seu QR Code</p>
+
+        {/* Progress dots */}
+        <div className="flex gap-2 mt-8">
+          <div className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -170,20 +198,20 @@ const PixPagamento = () => {
         {/* QR Code area */}
         <div className="flex justify-center mt-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 w-56 h-56 flex items-center justify-center">
-            {showQrLoading ? (
-              <div className="w-44 h-44 bg-gray-100 rounded animate-pulse" />
-            ) : transaction?.paymentData?.qrCodeBase64 ? (
+            {transaction?.paymentData?.qrCodeBase64 ? (
               <img
                 src={transaction.paymentData.qrCodeBase64}
                 alt="QR Code Pix"
                 className="w-44 h-44"
               />
-            ) : (
+            ) : pixCode ? (
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pixCode)}`}
                 alt="QR Code Pix"
                 className="w-44 h-44"
               />
+            ) : (
+              <div className="w-44 h-44 bg-gray-100 rounded animate-pulse" />
             )}
           </div>
         </div>
