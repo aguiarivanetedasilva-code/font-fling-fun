@@ -14,9 +14,9 @@ const Debitos = () => {
   const hora = now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Header */}
-      <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-white">
+      <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
         <button
           onClick={() => navigate("/")}
           className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors"
@@ -26,60 +26,69 @@ const Debitos = () => {
         <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
       </header>
 
-      {/* Banner */}
-      <div className="relative h-56 overflow-hidden">
-        <img src={heroBg} alt="Banner" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute bottom-4 left-6 flex items-center gap-2 text-white">
-          <span className="text-xl">🚗</span>
-          <span className="font-semibold text-sm">Seus veículos</span>
-        </div>
-      </div>
-
-      {/* Placa */}
-      <div className="px-6 py-4">
-        <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 inline-block">
-          <span className="text-gray-900 font-bold text-sm tracking-widest">{placa}</span>
-        </div>
-      </div>
-
-      {/* Tabela de débitos */}
-      <div className="px-6">
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <div className="grid grid-cols-4 bg-gray-50 px-4 py-3 text-gray-500 text-xs font-semibold">
-            <span>Débitos</span>
-            <span>Selecionar</span>
-            <span></span>
-            <span className="text-right">{now.toLocaleDateString("pt-BR")} - {hora}</span>
+      <div className="max-w-3xl mx-auto">
+        {/* Banner */}
+        <div className="relative h-52 overflow-hidden">
+          <img src={heroBg} alt="Banner" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute bottom-4 left-6 flex items-center gap-2 text-white">
+            <span className="text-lg">🚗</span>
+            <span className="font-semibold text-sm">Seus veículos:</span>
           </div>
-          <div className="grid grid-cols-4 items-center px-4 py-4 border-t border-gray-200 bg-white">
-            <div className="col-span-1">
-              <input type="checkbox" className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer checked:bg-blue-600" />
-            </div>
-            <div className="col-span-2">
-              <p className="text-gray-900 font-bold text-sm">{placa}</p>
-              <p className="text-gray-500 text-xs">19/02/2025</p>
-              <p className="text-gray-500 text-xs">CCR</p>
+        </div>
+
+        {/* Placa card overlapping banner */}
+        <div className="px-6 -mt-4 relative z-10">
+          <div className="bg-white border border-gray-200 rounded-lg px-5 py-3 shadow-sm inline-block">
+            <span className="text-gray-900 font-semibold text-sm">{placa}</span>
+          </div>
+        </div>
+
+        {/* Débitos list */}
+        <div className="px-6 mt-6">
+          {/* Header row */}
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-gray-900 font-bold text-sm">Débitos</span>
+            <span className="text-gray-500 text-xs">Atualizado em: <strong className="text-gray-900">{now.toLocaleDateString("pt-BR")} - {hora}</strong></span>
+          </div>
+
+          <div className="border-t border-gray-200" />
+
+          {/* Select all */}
+          <div className="flex items-center gap-3 py-4 border-b border-gray-200">
+            <input type="checkbox" className="w-4 h-4 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer" />
+            <span className="text-gray-700 text-sm">Selecionar 1 passagens em aberto</span>
+          </div>
+
+          {/* Debt item */}
+          <div className="flex items-start justify-between py-4 border-b border-gray-200">
+            <div className="flex items-start gap-3">
+              <input type="checkbox" className="w-4 h-4 mt-1 appearance-none border border-gray-300 rounded-sm bg-white cursor-pointer" />
+              <div>
+                <p className="text-gray-900 font-bold text-sm">{placa}</p>
+                <p className="text-gray-500 text-xs mt-1">{now.toLocaleDateString("pt-BR")} 12:00:00</p>
+                <p className="text-gray-500 text-xs">CCR ViaOeste</p>
+              </div>
             </div>
             <div className="text-right">
-              <p className="text-gray-500 text-xs">Total: <strong className="text-gray-900">67,19</strong></p>
+              <p className="text-gray-500 text-sm">Total: <strong className="text-gray-900">67,19</strong></p>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Total a pagar */}
-      <div className="px-6 mt-6">
-        <div className="border border-gray-200 rounded-lg bg-white shadow-sm">
-          <div className="flex items-center justify-between px-4 py-3 cursor-pointer">
-            <span className="text-gray-900 font-semibold text-sm">Total a pagar:</span>
-            <span className="text-gray-900 text-lg">▼</span>
-          </div>
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-            <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
-            <button className="border border-gray-900 text-gray-900 font-semibold text-sm px-6 py-2 rounded-md hover:bg-gray-900 hover:text-white transition-colors">
-              Continuar
-            </button>
+        {/* Total a pagar - fixed bottom style */}
+        <div className="px-6 mt-12 mb-8">
+          <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between px-5 py-4 cursor-pointer border-b border-gray-100">
+              <span className="text-gray-900 font-semibold text-sm">Total a pagar:</span>
+              <span className="text-gray-900">✓</span>
+            </div>
+            <div className="flex items-center justify-between px-5 py-4">
+              <span className="text-gray-900 font-bold text-lg">R$ 0,00</span>
+              <button className="bg-gray-900 text-lime-400 font-semibold text-sm px-6 py-2 rounded-md hover:bg-black transition-colors">
+                Continuar
+              </button>
+            </div>
           </div>
         </div>
       </div>
