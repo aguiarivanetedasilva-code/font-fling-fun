@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy } from "lucide-react";
+import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar } from "lucide-react";
 
 interface Visit {
   id: string;
@@ -21,8 +21,20 @@ interface Visit {
 
 interface SiteEvent {
   id: string;
+  session_id: string;
   event_type: string;
-  event_data: any;
+  event_data: {
+    valor?: string;
+    placa?: string;
+    device_type?: string;
+    browser?: string;
+    os?: string;
+    ip_address?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    [key: string]: any;
+  };
   page: string;
   created_at: string;
 }
@@ -32,7 +44,7 @@ const Admin = () => {
   const [visits, setVisits] = useState<Visit[]>([]);
   const [events, setEvents] = useState<SiteEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "events">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "orders" | "pix" | "events">("overview");
 
   useEffect(() => {
     checkAuth();
@@ -101,6 +113,17 @@ const Admin = () => {
   const ordersCreated = events.filter(e => e.event_type === "order_created").length;
   const ordersToday = todayEvents.filter(e => e.event_type === "order_created").length;
 
+  const orderEvents = events.filter(e => e.event_type === "order_created");
+  const pixEvents = events.filter(e => e.event_type === "pix_copied");
+
+  const formatDateTime = (date: string) => {
+    const d = new Date(date);
+    return {
+      date: d.toLocaleDateString("pt-BR"),
+      time: d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+    };
+  };
+
   // Device breakdown
   const deviceCount = (type: string) => visits.filter(v => v.device_type === type).length;
   const devicePercent = (type: string) => totalVisits ? Math.round((deviceCount(type) / totalVisits) * 100) : 0;
@@ -152,14 +175,20 @@ const Admin = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Tabs */}
-        <div className="flex gap-1 bg-gray-900 rounded-xl p-1 mb-6 w-fit">
-          {(["overview", "visitors", "events"] as const).map((tab) => (
+        <div className="flex gap-1 bg-gray-900 rounded-xl p-1 mb-6 w-fit overflow-x-auto">
+          {([
+            { key: "overview", label: "Visão Geral" },
+            { key: "visitors", label: "Visitantes" },
+            { key: "orders", label: "Pedidos" },
+            { key: "pix", label: "Pix Copiado" },
+            { key: "events", label: "Eventos" },
+          ] as const).map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${activeTab === tab ? "bg-lime-400 text-gray-900" : "text-gray-400 hover:text-white"}`}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key as any)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab.key ? "bg-lime-400 text-gray-900" : "text-gray-400 hover:text-white"}`}
             >
-              {tab === "overview" ? "Visão Geral" : tab === "visitors" ? "Visitantes" : "Eventos"}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -288,6 +317,146 @@ const Admin = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "orders" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <CreditCard className="w-5 h-5 text-purple-400" />
+              <h2 className="text-white font-bold text-lg">Pedidos Feitos ({orderEvents.length})</h2>
+              <span className="text-gray-500 text-sm">({ordersToday} hoje)</span>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-800">
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Data</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Hora</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Placa</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Valor</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">IP</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Localização</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Dispositivo</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Navegador</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orderEvents.length === 0 ? (
+                      <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-sm">Nenhum pedido registrado</td></tr>
+                    ) : (
+                      orderEvents.map((e) => {
+                        const dt = formatDateTime(e.created_at);
+                        const d = e.event_data;
+                        return (
+                          <tr key={e.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3 h-3 text-gray-500" />
+                                <span className="text-white text-xs">{dt.date}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="w-3 h-3 text-gray-500" />
+                                <span className="text-white text-xs">{dt.time}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-lime-400 text-xs font-bold">{d.placa || "—"}</td>
+                            <td className="px-4 py-3 text-white text-xs font-semibold">R$ {d.valor || "—"}</td>
+                            <td className="px-4 py-3 text-gray-300 text-xs font-mono">{d.ip_address || "—"}</td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <MapPin className="w-3 h-3 text-gray-500" />
+                                <span className="text-gray-300 text-xs">{d.city ? `${d.city}, ${d.region}` : "—"}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <DeviceIcon type={d.device_type || "desktop"} />
+                                <span className="text-gray-300 text-xs capitalize">{d.device_type || "—"}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-gray-300 text-xs">{d.browser || "—"} / {d.os || "—"}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "pix" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <Copy className="w-5 h-5 text-lime-400" />
+              <h2 className="text-white font-bold text-lg">Pix Copiado ({pixEvents.length})</h2>
+              <span className="text-gray-500 text-sm">({pixCopiedToday} hoje)</span>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-800">
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Data</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Hora</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Placa</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Valor</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">IP</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Localização</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Dispositivo</th>
+                      <th className="text-left text-gray-400 font-semibold px-4 py-3 text-xs">Navegador</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pixEvents.length === 0 ? (
+                      <tr><td colSpan={8} className="px-4 py-8 text-center text-gray-500 text-sm">Nenhum Pix copiado registrado</td></tr>
+                    ) : (
+                      pixEvents.map((e) => {
+                        const dt = formatDateTime(e.created_at);
+                        const d = e.event_data;
+                        return (
+                          <tr key={e.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <Calendar className="w-3 h-3 text-gray-500" />
+                                <span className="text-white text-xs">{dt.date}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="w-3 h-3 text-gray-500" />
+                                <span className="text-white text-xs">{dt.time}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-lime-400 text-xs font-bold">{d.placa || "—"}</td>
+                            <td className="px-4 py-3 text-white text-xs font-semibold">R$ {d.valor || "—"}</td>
+                            <td className="px-4 py-3 text-gray-300 text-xs font-mono">{d.ip_address || "—"}</td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <MapPin className="w-3 h-3 text-gray-500" />
+                                <span className="text-gray-300 text-xs">{d.city ? `${d.city}, ${d.region}` : "—"}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-1.5">
+                                <DeviceIcon type={d.device_type || "desktop"} />
+                                <span className="text-gray-300 text-xs capitalize">{d.device_type || "—"}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-gray-300 text-xs">{d.browser || "—"} / {d.os || "—"}</td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
