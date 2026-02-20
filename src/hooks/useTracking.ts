@@ -58,7 +58,26 @@ export function usePageTracking(page: string) {
       }).catch(console.error);
     }, 30000);
 
-    return () => clearInterval(interval);
+    // Mark offline when leaving
+    const markOffline = () => {
+      navigator.sendBeacon(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-visit`,
+        JSON.stringify({ session_id, page, offline: true })
+      );
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "hidden") markOffline();
+    };
+
+    window.addEventListener("beforeunload", markOffline);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("beforeunload", markOffline);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [page]);
 }
 

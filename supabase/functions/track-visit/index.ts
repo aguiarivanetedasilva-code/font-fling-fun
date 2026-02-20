@@ -18,7 +18,19 @@ Deno.serve(async (req) => {
     );
 
     const body = await req.json();
-    const { session_id, page, device_type, browser, os, user_agent, referrer, event_type, event_data } = body;
+    const { session_id, page, device_type, browser, os, user_agent, referrer, event_type, event_data, offline } = body;
+
+    // Handle offline signal
+    if (offline && session_id) {
+      const { error } = await supabase
+        .from("site_visits")
+        .update({ is_online: false, last_seen_at: new Date().toISOString() })
+        .eq("session_id", session_id);
+      if (error) throw error;
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Get IP from request headers
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
