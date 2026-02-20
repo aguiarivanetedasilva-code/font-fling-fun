@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar } from "lucide-react";
+import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar, RefreshCw, Trash2 } from "lucide-react";
 
 interface Visit {
   id: string;
@@ -97,6 +97,27 @@ const Admin = () => {
     navigate("/admin/login");
   };
 
+  const [clearing, setClearing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleClear = async () => {
+    if (!confirm("Tem certeza que deseja limpar todos os dados do painel?")) return;
+    setClearing(true);
+    await Promise.all([
+      supabase.from("site_visits").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+      supabase.from("site_events").delete().neq("id", "00000000-0000-0000-0000-000000000000"),
+    ]);
+    setVisits([]);
+    setEvents([]);
+    setClearing(false);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
+
   // Calculate stats
   const now = new Date();
   const fiveMinAgo = new Date(now.getTime() - 5 * 60 * 1000);
@@ -161,11 +182,17 @@ const Admin = () => {
             </div>
             <span className="text-white font-bold text-lg hidden sm:block">Admin Panel</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/20 border border-green-500/30 rounded-full">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
               <span className="text-green-400 text-xs font-semibold">{onlineVisitors.length} online</span>
             </div>
+            <button onClick={handleRefresh} disabled={refreshing} className="p-2 text-gray-400 hover:text-lime-400 transition-colors disabled:opacity-50" title="Atualizar">
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            </button>
+            <button onClick={handleClear} disabled={clearing} className="p-2 text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50" title="Limpar painel">
+              <Trash2 className="w-4 h-4" />
+            </button>
             <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-white transition-colors">
               <LogOut className="w-5 h-5" />
             </button>
