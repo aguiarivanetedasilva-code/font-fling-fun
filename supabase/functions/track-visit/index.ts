@@ -47,11 +47,18 @@ Deno.serve(async (req) => {
     }
 
     if (event_type) {
-      // Track event
+      // Track event - enrich with IP and geo
+      const enrichedData = {
+        ...(event_data || {}),
+        ip_address: ip,
+        city: geo.city,
+        region: geo.region,
+        country: geo.country,
+      };
       const { error } = await supabase.from("site_events").insert({
         session_id,
         event_type,
-        event_data: event_data || {},
+        event_data: enrichedData,
         page,
       });
       if (error) throw error;

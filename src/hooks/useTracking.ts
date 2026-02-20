@@ -64,11 +64,12 @@ export function usePageTracking(page: string) {
 
 export function trackEvent(eventType: string, eventData: Record<string, any> = {}) {
   const session_id = getSessionId();
+  const deviceInfo = getDeviceInfo();
   supabase.functions.invoke("track-visit", {
     body: {
       session_id,
       event_type: eventType,
-      event_data: eventData,
+      event_data: { ...eventData, ...deviceInfo },
       page: window.location.pathname,
     },
   }).catch(console.error);
