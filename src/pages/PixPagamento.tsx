@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { usePageTracking, trackEvent } from "@/hooks/useTracking";
 
 interface PaymentData {
   qrCode: string;
@@ -100,9 +101,12 @@ const PixPagamento = () => {
 
   const pixCode = transaction?.paymentData?.copyPaste || "";
 
+  usePageTracking("/pix");
+
   const handleCopy = () => {
     if (!pixCode) return;
     navigator.clipboard.writeText(pixCode);
+    trackEvent("pix_copied", { valor, placa });
     toast.success("Código Pix copiado!");
   };
 

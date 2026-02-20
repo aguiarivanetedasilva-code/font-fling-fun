@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { usePageTracking } from "@/hooks/useTracking";
 import heroBg from "@/assets/hero-bg.png";
 
 const Header = () => (
@@ -109,6 +110,7 @@ const SearchCard = () => {
 };
 
 const Index = () => {
+  usePageTracking("/");
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background */}

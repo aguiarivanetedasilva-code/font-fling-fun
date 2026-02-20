@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.png";
+import { usePageTracking, trackEvent } from "@/hooks/useTracking";
 
 const Debitos = () => {
   const [searchParams] = useSearchParams();
@@ -9,6 +10,7 @@ const Debitos = () => {
   const [showModal, setShowModal] = useState(true);
   const [selected, setSelected] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  usePageTracking("/debitos");
 
   const now = new Date();
   const diasSemana = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
@@ -112,6 +114,7 @@ const Debitos = () => {
               <button
                 onClick={() => {
                   const valor = selected ? "67,19" : "0,00";
+                  trackEvent("order_created", { valor, placa });
                   const params = new URLSearchParams({
                     valor,
                     placa,
