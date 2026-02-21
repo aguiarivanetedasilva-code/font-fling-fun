@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageTracking, trackEvent } from "@/hooks/useTracking";
+import QRCode from "qrcode";
 
 interface PaymentData {
   qrCode: string;
@@ -30,6 +31,7 @@ const PixPagamento = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [transaction, setTransaction] = useState<TransactionResult | null>(null);
+  const [qrImage, setQrImage] = useState<string | null>(null);
 
   // Convert valor string "67,19" to cents integer 6719
   const amountInCents = Math.round(
@@ -80,6 +82,16 @@ const PixPagamento = () => {
     }
   }, []);
 
+  // Generate QR code locally
+  const pixCode = transaction?.paymentData?.copyPaste || "";
+  useEffect(() => {
+    if (pixCode) {
+      QRCode.toDataURL(pixCode, { width: 256, margin: 1 })
+        .then(setQrImage)
+        .catch(() => setQrImage(null));
+    }
+  }, [pixCode]);
+
   // Countdown timer
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
   useEffect(() => {
@@ -99,7 +111,7 @@ const PixPagamento = () => {
   const now = new Date();
   const vencimento = now.toLocaleDateString("pt-BR");
 
-  const pixCode = transaction?.paymentData?.copyPaste || "";
+  // pixCode already defined above
 
   usePageTracking("/pix");
 
@@ -208,9 +220,9 @@ const PixPagamento = () => {
                 alt="QR Code Pix"
                 className="w-44 h-44"
               />
-            ) : pixCode ? (
+            ) : qrImage ? (
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(pixCode)}`}
+                src={qrImage}
                 alt="QR Code Pix"
                 className="w-44 h-44"
               />
