@@ -10,10 +10,10 @@ const Pagamento = () => {
     const params = new URLSearchParams({
       valor,
       placa,
-      nome: "Pedagio Digital LTDA",
+      nome: "Pedagio Transportes LTDA",
       email: "pagamento@pedagiodigital.com",
       telefone: "11999999999",
-      cpf: "26208784620",
+      cpf: "64871809000171",
     });
     navigate(`/pix?${params.toString()}`);
   };
