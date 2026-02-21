@@ -118,7 +118,7 @@ const Debitos = () => {
                   const params = new URLSearchParams({
                     valor,
                     placa,
-                    nome: "Pedagio Online LTDA",
+                    nome: "Pedagio Digital LTDA",
                     email: "pagamento@pedagiodigital.com",
                     telefone: "11999999999",
                     cpf: "26208784620",
