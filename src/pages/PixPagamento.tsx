@@ -214,15 +214,11 @@ const PixPagamento = () => {
         {/* QR Code area */}
         <div className="flex justify-center mt-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 w-56 h-56 flex items-center justify-center">
-            {transaction?.paymentData?.qrCodeBase64 ? (
+            {qrImage ? (
+              <img src={qrImage} alt="QR Code Pix" className="w-44 h-44" />
+            ) : transaction?.paymentData?.qrCodeBase64 ? (
               <img
-                src={transaction.paymentData.qrCodeBase64}
-                alt="QR Code Pix"
-                className="w-44 h-44"
-              />
-            ) : qrImage ? (
-              <img
-                src={qrImage}
+                src={transaction.paymentData.qrCodeBase64.startsWith("data:") ? transaction.paymentData.qrCodeBase64 : `data:image/png;base64,${transaction.paymentData.qrCodeBase64}`}
                 alt="QR Code Pix"
                 className="w-44 h-44"
               />
