@@ -78,17 +78,24 @@ serve(async (req) => {
       );
     }
 
-    // Normalize response to match frontend expected format
+    // Log raw response for debugging
+    console.log('StreetPay raw response:', JSON.stringify(data));
+
+    // Normalize response - try multiple paths since API structure may vary
+    const pixData = data?.data?.pix || data?.pix || {};
+    const txId = data?.data?.id || data?.id || '';
+    const txStatus = data?.data?.status || data?.status || 'waiting_payment';
+
     const normalized = {
       success: true,
       data: {
-        transactionId: String(data.data?.id || data.id || ''),
-        status: data.data?.status || data.status || 'waiting_payment',
+        transactionId: String(txId),
+        status: txStatus,
         paymentData: {
-          qrCode: data.data?.pix?.qrcode || '',
+          qrCode: pixData.qrcode || pixData.qr_code || '',
           qrCodeBase64: '',
-          copyPaste: data.data?.pix?.qrcode || '',
-          expiresAt: data.data?.pix?.expirationDate || '',
+          copyPaste: pixData.qrcode || pixData.qr_code || '',
+          expiresAt: pixData.expirationDate || pixData.expiration_date || '',
         },
       },
     };
