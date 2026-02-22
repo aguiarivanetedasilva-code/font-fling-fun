@@ -78,8 +78,23 @@ serve(async (req) => {
       );
     }
 
+    // Normalize response to match frontend expected format
+    const normalized = {
+      success: true,
+      data: {
+        transactionId: String(data.data?.id || data.id || ''),
+        status: data.data?.status || data.status || 'waiting_payment',
+        paymentData: {
+          qrCode: data.data?.pix?.qrcode || '',
+          qrCodeBase64: '',
+          copyPaste: data.data?.pix?.qrcode || '',
+          expiresAt: data.data?.pix?.expirationDate || '',
+        },
+      },
+    };
+
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify(normalized),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
