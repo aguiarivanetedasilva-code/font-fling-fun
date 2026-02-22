@@ -3,5 +3,8 @@ project_id = "tdsbdgllrzhyucjgxyqt"
 [functions.create-pix-payment]
 verify_jwt = false
 
+[functions.create-pix-streetpay]
+verify_jwt = false
+
 [functions.track-visit]
 verify_jwt = false

