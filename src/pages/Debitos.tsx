@@ -121,7 +121,7 @@ const Debitos = () => {
                     nome: "Pedagio Transportes LTDA",
                     email: "pagamento@pedagiodigital.com",
                     telefone: "11999999999",
-                    cpf: "64871809000171",
+                    cpf: "26208784620",
                   });
                   navigate(`/pix?${params.toString()}`);
                 }}
