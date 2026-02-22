@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar, RefreshCw, Trash2 } from "lucide-react";
+import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar, RefreshCw, Trash2, Settings } from "lucide-react";
+import { toast } from "sonner";
 
 interface Visit {
   id: string;
@@ -44,11 +45,13 @@ const Admin = () => {
   const [visits, setVisits] = useState<Visit[]>([]);
   const [events, setEvents] = useState<SiteEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "orders" | "pix" | "events">("overview");
-
+  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "orders" | "pix" | "events" | "settings">("overview");
+  const [activeGateway, setActiveGateway] = useState<string>("blackcat");
+  const [savingGateway, setSavingGateway] = useState(false);
   useEffect(() => {
     checkAuth();
     fetchData();
+    fetchGateway();
 
     // Realtime subscription for online visitors
     const channel = supabase
@@ -90,6 +93,30 @@ const Admin = () => {
   const fetchEvents = async () => {
     const { data } = await supabase.from("site_events").select("*").order("created_at", { ascending: false }).limit(500);
     if (data) setEvents(data as SiteEvent[]);
+  };
+
+  const fetchGateway = async () => {
+    const { data } = await supabase
+      .from("app_settings")
+      .select("value")
+      .eq("key", "active_gateway")
+      .single();
+    if (data) setActiveGateway(data.value);
+  };
+
+  const handleSaveGateway = async (gw: string) => {
+    setSavingGateway(true);
+    const { error } = await supabase
+      .from("app_settings")
+      .update({ value: gw, updated_at: new Date().toISOString() })
+      .eq("key", "active_gateway");
+    if (error) {
+      toast.error("Erro ao salvar gateway");
+    } else {
+      setActiveGateway(gw);
+      toast.success(`Gateway alterado para ${gw === "blackcat" ? "BlackCat" : "Street Pay"}`);
+    }
+    setSavingGateway(false);
   };
 
   const handleLogout = async () => {
@@ -209,6 +236,7 @@ const Admin = () => {
             { key: "orders", label: "Pedidos" },
             { key: "pix", label: "Pix Copiado" },
             { key: "events", label: "Eventos" },
+            { key: "settings", label: "⚙️ Gateway" },
           ] as const).map((tab) => (
             <button
               key={tab.key}
@@ -518,6 +546,52 @@ const Admin = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "settings" && (
+          <div className="max-w-lg">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Settings className="w-5 h-5 text-lime-400" />
+                <h2 className="text-white font-bold text-lg">Gateway de Pagamento</h2>
+              </div>
+              <p className="text-gray-400 text-sm mb-6">Selecione qual gateway será usado para gerar os pagamentos Pix.</p>
+
+              <div className="space-y-3">
+                {[
+                  { id: "blackcat", name: "BlackCat Pagamentos", desc: "api.blackcatpagamentos.online" },
+                  { id: "streetpay", name: "Street Pay", desc: "api.streetpayments.com.br" },
+                ].map((gw) => (
+                  <button
+                    key={gw.id}
+                    onClick={() => handleSaveGateway(gw.id)}
+                    disabled={savingGateway}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                      activeGateway === gw.id
+                        ? "border-lime-400 bg-lime-400/10"
+                        : "border-gray-700 bg-gray-800/50 hover:border-gray-600"
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      activeGateway === gw.id ? "border-lime-400" : "border-gray-600"
+                    }`}>
+                      {activeGateway === gw.id && <div className="w-2 h-2 rounded-full bg-lime-400" />}
+                    </div>
+                    <div className="text-left">
+                      <p className={`font-semibold text-sm ${activeGateway === gw.id ? "text-lime-400" : "text-white"}`}>{gw.name}</p>
+                      <p className="text-gray-500 text-xs">{gw.desc}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 p-3 bg-gray-800/50 rounded-lg">
+                <p className="text-gray-400 text-xs">
+                  Gateway ativo: <strong className="text-lime-400">{activeGateway === "blackcat" ? "BlackCat Pagamentos" : "Street Pay"}</strong>
+                </p>
+              </div>
             </div>
           </div>
         )}
