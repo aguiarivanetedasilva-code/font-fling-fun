@@ -68,10 +68,11 @@ serve(async (req) => {
 
     console.log('BlackPay raw response:', JSON.stringify(data));
 
-    if (!response.ok) {
+    if (!response.ok || data.status === "false" || data.status === false) {
+      console.error('BlackPay error:', data);
       return new Response(
         JSON.stringify({ success: false, message: data.message || 'Erro ao criar pagamento' }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
