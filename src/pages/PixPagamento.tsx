@@ -52,7 +52,12 @@ const PixPagamento = () => {
           .single();
 
         const gateway = settingsData?.value || "blackcat";
-        const functionName = gateway === "streetpay" ? "create-pix-streetpay" : "create-pix-payment";
+        const functionMap: Record<string, string> = {
+          streetpay: "create-pix-streetpay",
+          blackpay: "create-pix-blackpay",
+          blackcat: "create-pix-payment",
+        };
+        const functionName = functionMap[gateway] || "create-pix-payment";
 
         const { data, error: fnError } = await supabase.functions.invoke(
           functionName,
