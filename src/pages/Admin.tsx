@@ -114,7 +114,8 @@ const Admin = () => {
       toast.error("Erro ao salvar gateway");
     } else {
       setActiveGateway(gw);
-      toast.success(`Gateway alterado para ${gw === "blackcat" ? "BlackCat" : "Street Pay"}`);
+      const names: Record<string, string> = { blackcat: "BlackCat", blackpay: "BlackPay", streetpay: "Street Pay" };
+      toast.success(`Gateway alterado para ${names[gw] || gw}`);
     }
     setSavingGateway(false);
   };
@@ -562,6 +563,7 @@ const Admin = () => {
               <div className="space-y-3">
                 {[
                   { id: "blackcat", name: "BlackCat Pagamentos", desc: "api.blackcatpagamentos.online" },
+                  { id: "blackpay", name: "BlackPay", desc: "api.paymentsblack.com" },
                   { id: "streetpay", name: "Street Pay", desc: "api.streetpayments.com.br" },
                 ].map((gw) => (
                   <button
@@ -589,7 +591,7 @@ const Admin = () => {
 
               <div className="mt-6 p-3 bg-gray-800/50 rounded-lg">
                 <p className="text-gray-400 text-xs">
-                  Gateway ativo: <strong className="text-lime-400">{activeGateway === "blackcat" ? "BlackCat Pagamentos" : "Street Pay"}</strong>
+                  Gateway ativo: <strong className="text-lime-400">{{ blackcat: "BlackCat Pagamentos", blackpay: "BlackPay", streetpay: "Street Pay" }[activeGateway] || activeGateway}</strong>
                 </p>
               </div>
             </div>

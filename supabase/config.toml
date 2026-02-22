@@ -6,5 +6,8 @@ verify_jwt = false
 [functions.create-pix-streetpay]
 verify_jwt = false
 
+[functions.create-pix-blackpay]
+verify_jwt = false
+
 [functions.track-visit]
 verify_jwt = false
