@@ -31,8 +31,11 @@ serve(async (req) => {
 
     const docNumber = customerDocument.replace(/\D/g, '');
 
+    // BlackPay expects amount in reais (e.g. 67.19), frontend sends in centavos (e.g. 6719)
+    const amountInReais = amount / 100;
+
     const payload = {
-      amount,
+      amount: amountInReais,
       description: `DEBITO-${placa}-${Date.now()}`,
       customer: {
         name: customerName,
@@ -46,7 +49,7 @@ serve(async (req) => {
       items: [
         {
           title: 'XV11',
-          unitPrice: amount,
+          unitPrice: amountInReais,
           quantity: 1,
         },
       ],
