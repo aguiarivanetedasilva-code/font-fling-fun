@@ -10,7 +10,7 @@ const Pagamento = () => {
     const params = new URLSearchParams({
       valor,
       placa,
-      nome: "Pedagio Digital",
+      nome: "John Smith",
       email: "pagamento@pedagiodigital.com",
       telefone: "11999999999",
       cpf: "26208784620",
