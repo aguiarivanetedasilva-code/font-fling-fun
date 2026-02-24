@@ -135,6 +135,17 @@ const Admin = () => {
     }
   };
 
+  const handleDeleteComprovante = async (fileName: string) => {
+    if (!confirm(`Excluir comprovante ${fileName}?`)) return;
+    const { error } = await supabase.storage.from('comprovantes').remove([fileName]);
+    if (error) {
+      toast.error("Erro ao excluir comprovante");
+    } else {
+      toast.success("Comprovante excluído");
+      setComprovantes(prev => prev.filter(f => f.name !== fileName));
+    }
+  };
+
   const handleSaveGateway = async (gw: string) => {
     setSavingGateway(true);
     const { error } = await supabase
@@ -627,9 +638,14 @@ const Admin = () => {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-gray-500 text-xs">{new Date(file.created_at).toLocaleString("pt-BR")}</span>
-                          <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:text-lime-300 transition-colors">
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
+                          <div className="flex items-center gap-2">
+                            <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:text-lime-300 transition-colors">
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                            <button onClick={() => handleDeleteComprovante(file.name)} className="text-gray-500 hover:text-red-400 transition-colors">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
