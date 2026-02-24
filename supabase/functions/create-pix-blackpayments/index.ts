@@ -46,7 +46,7 @@ serve(async (req) => {
       },
       items: [
         {
-          title: 'XV11',
+          title: 'jogo de faca',
           quantity: 1,
           tangible: true,
           unitPrice: amount,
