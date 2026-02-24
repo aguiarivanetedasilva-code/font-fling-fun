@@ -32,6 +32,7 @@ const PixPagamento = () => {
   const [error, setError] = useState<string | null>(null);
   const [transaction, setTransaction] = useState<TransactionResult | null>(null);
   const [qrImage, setQrImage] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<string>("PENDING");
 
   // Convert valor string "67,19" to cents integer 6719
   const amountInCents = Math.round(
@@ -107,14 +108,38 @@ const PixPagamento = () => {
     }
   }, [pixCode]);
 
+  // Poll payment status every 5 seconds
+  useEffect(() => {
+    if (!transaction?.transactionId || paymentStatus === "PAID") return;
+
+    const pollStatus = async () => {
+      try {
+        const { data } = await supabase.functions.invoke("check-payment-status", {
+          body: { transactionId: transaction.transactionId },
+        });
+        if (data?.success && data.status) {
+          setPaymentStatus(data.status);
+        }
+      } catch (err) {
+        console.error("Poll status error:", err);
+      }
+    };
+
+    // Poll immediately then every 5s
+    pollStatus();
+    const interval = setInterval(pollStatus, 5000);
+    return () => clearInterval(interval);
+  }, [transaction?.transactionId, paymentStatus]);
+
   // Countdown timer
   const [secondsLeft, setSecondsLeft] = useState(15 * 60);
   useEffect(() => {
+    if (paymentStatus === "PAID") return;
     const interval = setInterval(() => {
       setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [paymentStatus]);
 
   const formatTime = (s: number) => {
     const h = Math.floor(s / 3600);
@@ -162,17 +187,29 @@ const PixPagamento = () => {
   }
 
   if (error) {
+  if (paymentStatus === "PAID") {
     return (
-      <div className="min-h-screen bg-gray-100 text-gray-900">
+      <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
         <header className="flex items-center justify-center relative px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <button onClick={() => navigate(-1)} className="absolute left-6 text-gray-900 text-2xl font-bold hover:text-gray-600 transition-colors">‹</button>
-          <h1 className="text-gray-900 font-bold text-lg">Débitos</h1>
+          <h1 className="text-gray-900 font-bold text-lg">Pagamento Confirmado</h1>
         </header>
-        <div className="flex flex-col items-center justify-center mt-20 gap-4 px-6 text-center">
-          <span className="text-4xl">❌</span>
-          <p className="text-gray-900 font-bold text-lg">Erro ao gerar Pix</p>
-          <p className="text-gray-600 text-sm">{error}</p>
-          <button onClick={() => navigate(-1)} className="mt-4 px-6 py-3 bg-gray-950 text-white rounded-xl font-bold">Voltar</button>
+        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
+          <div className="w-24 h-24 rounded-full bg-lime-400 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-900">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <div className="text-center">
+            <h2 className="text-gray-900 font-bold text-2xl mb-2">Pagamento recebido!</h2>
+            <p className="text-gray-600 text-sm">Seu pagamento de <strong>R$ {valor}</strong> foi confirmado com sucesso.</p>
+            <p className="text-gray-500 text-xs mt-1">Placa: {placa}</p>
+          </div>
+          <button
+            onClick={() => navigate("/")}
+            className="mt-4 px-8 py-4 bg-gray-950 text-white rounded-xl font-bold text-base hover:bg-black transition-colors"
+          >
+            Voltar ao início
+          </button>
         </div>
       </div>
     );
