@@ -324,8 +324,12 @@ const PixPagamento = () => {
         </button>
 
         {/* Upload comprovante */}
-        <div className="mt-8 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-          <h3 className="text-gray-900 font-bold text-sm mb-1">Enviar comprovante</h3>
+        <div className="mt-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl p-4 text-center animate-pulse">
+          <p className="text-white font-extrabold text-base tracking-wide">⚠️ Problemas com o pagamento?</p>
+          <p className="text-white/90 font-semibold text-sm">Envie o comprovante abaixo!</p>
+        </div>
+        <div className="mt-3 bg-white border-2 border-orange-400 rounded-xl p-6 shadow-md">
+          <h3 className="text-gray-900 font-bold text-sm mb-1">📎 Enviar comprovante</h3>
           <p className="text-gray-500 text-xs mb-4">Após o pagamento, envie o comprovante para agilizar a confirmação.</p>
 
           <div className="flex items-center justify-between py-2 mb-4 bg-gray-50 rounded-lg px-4">
