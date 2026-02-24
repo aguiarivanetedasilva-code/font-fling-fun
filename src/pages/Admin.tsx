@@ -285,7 +285,15 @@ const Admin = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key as any)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${activeTab === tab.key ? "bg-lime-400 text-gray-900" : "text-gray-400 hover:text-white"}`}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
+                tab.key === "comprovantes"
+                  ? activeTab === tab.key
+                    ? "bg-orange-500 text-white ring-2 ring-orange-400/50"
+                    : "bg-orange-500/20 text-orange-400 hover:bg-orange-500/30 border border-orange-500/40"
+                  : activeTab === tab.key
+                    ? "bg-lime-400 text-gray-900"
+                    : "text-gray-400 hover:text-white"
+              }`}
             >
               {tab.label}
             </button>
