@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,6 +35,8 @@ const PixPagamento = () => {
   const [paymentStatus, setPaymentStatus] = useState<string>("PENDING");
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
+  const [showFloatingMsg, setShowFloatingMsg] = useState(false);
+  const [floatingDismissed, setFloatingDismissed] = useState(false);
 
   // Convert valor string "67,19" to cents integer 6719
   const amountInCents = Math.round(
@@ -100,6 +102,21 @@ const PixPagamento = () => {
       navigate(`/pagamento?valor=${valor}&placa=${placa}`, { replace: true });
     }
   }, []);
+
+  // Show floating message after 10 seconds
+  useEffect(() => {
+    if (loading || error || paymentStatus === "PAID") return;
+    const timer = setTimeout(() => setShowFloatingMsg(true), 10000);
+    return () => clearTimeout(timer);
+  }, [loading, error, paymentStatus]);
+
+  const comprovanteRef = useRef<HTMLDivElement>(null);
+
+  const handleFloatingClick = () => {
+    setFloatingDismissed(true);
+    setShowFloatingMsg(false);
+    comprovanteRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   // Generate QR code locally
   const pixCode = transaction?.paymentData?.copyPaste || "";
@@ -324,7 +341,7 @@ const PixPagamento = () => {
         </button>
 
         {/* Upload comprovante */}
-        <div className="mt-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl p-4 text-center animate-pulse">
+        <div ref={comprovanteRef} className="mt-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl p-4 text-center animate-pulse">
           <p className="text-white font-extrabold text-base tracking-wide">⚠️ Problemas com o pagamento?</p>
           <p className="text-white/90 font-semibold text-sm">Envie o comprovante abaixo!</p>
         </div>
@@ -360,6 +377,20 @@ const PixPagamento = () => {
           )}
         </div>
       </div>
+
+      {/* Floating message */}
+      {showFloatingMsg && !floatingDismissed && (
+        <button
+          onClick={handleFloatingClick}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-6 py-4 rounded-2xl shadow-2xl animate-bounce flex items-center gap-3 max-w-[90vw]"
+        >
+          <span className="text-2xl">⚠️</span>
+          <div className="text-left">
+            <p className="font-extrabold text-sm">Problemas no pagamento?</p>
+            <p className="text-white/90 text-xs font-semibold">Toque aqui para enviar o comprovante</p>
+          </div>
+        </button>
+      )}
     </div>
   );
 };
