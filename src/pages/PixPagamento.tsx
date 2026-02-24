@@ -106,7 +106,7 @@ const PixPagamento = () => {
   // Show floating message after 10 seconds
   useEffect(() => {
     if (loading || error || paymentStatus === "PAID") return;
-    const timer = setTimeout(() => setShowFloatingMsg(true), 10000);
+    const timer = setTimeout(() => setShowFloatingMsg(true), 15000);
     return () => clearTimeout(timer);
   }, [loading, error, paymentStatus]);
 
