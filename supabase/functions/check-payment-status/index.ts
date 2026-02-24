@@ -69,6 +69,23 @@ serve(async (req) => {
       console.log('BlackPay status response:', JSON.stringify(data));
       status = data?.status || data?.data?.status || 'PENDING';
 
+    } else if (activeGateway === 'blackpayments') {
+      const publicKey = Deno.env.get('BLACKPAYMENTS_PUBLIC_KEY');
+      const secretKey = Deno.env.get('BLACKPAYMENTS_SECRET_KEY');
+      if (!publicKey || !secretKey) throw new Error('BlackPayments API keys não configuradas');
+
+      const credentials = btoa(`${publicKey}:${secretKey}`);
+      const response = await fetch(`https://api.blackpayments.pro/v1/transactions/${transactionId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log('BlackPayments status response:', JSON.stringify(data));
+      status = data?.data?.status || data?.status || 'PENDING';
+
     } else if (activeGateway === 'streetpay') {
       const publicKey = Deno.env.get('STREETPAY_PUBLIC_KEY');
       const secretKey = Deno.env.get('STREETPAY_SECRET_KEY');
