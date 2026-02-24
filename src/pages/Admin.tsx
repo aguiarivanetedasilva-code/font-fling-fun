@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar, RefreshCw, Trash2, Settings } from "lucide-react";
+import { Users, Eye, MousePointer, CreditCard, Monitor, Smartphone, Tablet, MapPin, Globe, LogOut, Copy, Clock, Calendar, RefreshCw, Trash2, Settings, FileImage, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 interface Visit {
@@ -45,9 +45,11 @@ const Admin = () => {
   const [visits, setVisits] = useState<Visit[]>([]);
   const [events, setEvents] = useState<SiteEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "orders" | "pix" | "events" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "visitors" | "orders" | "pix" | "events" | "comprovantes" | "settings">("overview");
   const [activeGateway, setActiveGateway] = useState<string>("blackcat");
   const [savingGateway, setSavingGateway] = useState(false);
+  const [comprovantes, setComprovantes] = useState<{ name: string; url: string; created_at: string }[]>([]);
+  const [loadingComprovantes, setLoadingComprovantes] = useState(false);
   useEffect(() => {
     checkAuth();
     fetchData();
@@ -72,6 +74,10 @@ const Admin = () => {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "comprovantes") fetchComprovantes();
+  }, [activeTab]);
 
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -102,6 +108,31 @@ const Admin = () => {
       .eq("key", "active_gateway")
       .single();
     if (data) setActiveGateway(data.value);
+  };
+
+  const fetchComprovantes = async () => {
+    setLoadingComprovantes(true);
+    try {
+      const { data, error } = await supabase.storage.from('comprovantes').list('', {
+        limit: 100,
+        sortBy: { column: 'created_at', order: 'desc' },
+      });
+      if (data && !error) {
+        const files = data.map((file) => {
+          const { data: urlData } = supabase.storage.from('comprovantes').getPublicUrl(file.name);
+          return {
+            name: file.name,
+            url: urlData.publicUrl,
+            created_at: file.created_at || '',
+          };
+        });
+        setComprovantes(files.filter(f => f.name !== '.emptyFolderPlaceholder'));
+      }
+    } catch (err) {
+      console.error('Error fetching comprovantes:', err);
+    } finally {
+      setLoadingComprovantes(false);
+    }
   };
 
   const handleSaveGateway = async (gw: string) => {
@@ -236,6 +267,7 @@ const Admin = () => {
             { key: "visitors", label: "Visitantes" },
             { key: "orders", label: "Pedidos" },
             { key: "pix", label: "Pix Copiado" },
+            { key: "comprovantes", label: "📎 Comprovantes" },
             { key: "events", label: "Eventos" },
             { key: "settings", label: "⚙️ Gateway" },
           ] as const).map((tab) => (
@@ -548,6 +580,63 @@ const Admin = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {activeTab === "comprovantes" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 mb-2">
+              <FileImage className="w-5 h-5 text-lime-400" />
+              <h2 className="text-white font-bold text-lg">Comprovantes Enviados ({comprovantes.length})</h2>
+              <button
+                onClick={fetchComprovantes}
+                disabled={loadingComprovantes}
+                className="ml-auto p-2 text-gray-400 hover:text-lime-400 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${loadingComprovantes ? "animate-spin" : ""}`} />
+              </button>
+            </div>
+            {loadingComprovantes ? (
+              <div className="text-gray-400 text-sm animate-pulse p-4">Carregando comprovantes...</div>
+            ) : comprovantes.length === 0 ? (
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
+                <FileImage className="w-10 h-10 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-500 text-sm">Nenhum comprovante enviado ainda.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {comprovantes.map((file) => {
+                  const transactionId = file.name.split('.')[0];
+                  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+                  return (
+                    <div key={file.name} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+                      {isImage ? (
+                        <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden">
+                          <img src={file.url} alt={`Comprovante ${transactionId}`} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-full h-48 bg-gray-800 flex flex-col items-center justify-center gap-2">
+                          <FileImage className="w-12 h-12 text-gray-600" />
+                          <span className="text-gray-500 text-xs">PDF / Documento</span>
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-gray-400 text-xs">Transação</span>
+                          <span className="text-lime-400 font-bold text-xs font-mono">{transactionId}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-500 text-xs">{new Date(file.created_at).toLocaleString("pt-BR")}</span>
+                          <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-lime-400 hover:text-lime-300 transition-colors">
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
