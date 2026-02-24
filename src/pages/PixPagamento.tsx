@@ -242,6 +242,12 @@ const PixPagamento = () => {
             <span className="text-gray-600 text-sm">Placa do veículo</span>
             <span className="text-gray-900 font-bold text-sm">{placa}</span>
           </div>
+          {transaction?.transactionId && (
+            <div className="flex items-center justify-between py-2">
+              <span className="text-gray-600 text-sm">Nº da transação</span>
+              <span className="text-gray-900 font-bold text-sm font-mono">{transaction.transactionId}</span>
+            </div>
+          )}
           <div className="flex items-center justify-between py-2">
             <span className="text-gray-600 text-sm">Vencimento código Pix</span>
             <span className="text-gray-900 font-bold text-sm">{vencimento}</span>
