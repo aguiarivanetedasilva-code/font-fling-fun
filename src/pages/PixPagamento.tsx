@@ -33,6 +33,8 @@ const PixPagamento = () => {
   const [transaction, setTransaction] = useState<TransactionResult | null>(null);
   const [qrImage, setQrImage] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<string>("PENDING");
+  const [uploading, setUploading] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
 
   // Convert valor string "67,19" to cents integer 6719
   const amountInCents = Math.round(
@@ -153,6 +155,31 @@ const PixPagamento = () => {
   const vencimento = now.toLocaleDateString("pt-BR");
 
   usePageTracking("/pix");
+
+  const handleUploadComprovante = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !transaction?.transactionId) return;
+
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const filePath = `${transaction.transactionId}.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('comprovantes')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      setUploaded(true);
+      toast.success("Comprovante enviado com sucesso!");
+    } catch (err: any) {
+      console.error("Upload error:", err);
+      toast.error("Erro ao enviar comprovante. Tente novamente.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleCopy = () => {
     if (!pixCode) return;
@@ -295,6 +322,39 @@ const PixPagamento = () => {
         >
           Copiar código Pix
         </button>
+
+        {/* Upload comprovante */}
+        <div className="mt-8 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <h3 className="text-gray-900 font-bold text-sm mb-1">Enviar comprovante</h3>
+          <p className="text-gray-500 text-xs mb-4">Após o pagamento, envie o comprovante para agilizar a confirmação.</p>
+
+          <div className="flex items-center justify-between py-2 mb-4 bg-gray-50 rounded-lg px-4">
+            <span className="text-gray-600 text-xs">Nº da transação</span>
+            <span className="text-gray-900 font-bold text-xs font-mono">{transaction?.transactionId || "—"}</span>
+          </div>
+
+          {uploaded ? (
+            <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <p className="text-green-700 text-sm font-semibold">Comprovante enviado com sucesso!</p>
+            </div>
+          ) : (
+            <label className={`w-full flex flex-col items-center gap-2 py-6 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${uploading ? "border-gray-300 bg-gray-50" : "border-gray-300 hover:border-lime-400 hover:bg-lime-50/30"}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span className="text-gray-600 text-sm font-semibold">{uploading ? "Enviando..." : "Toque para enviar comprovante"}</span>
+              <span className="text-gray-400 text-xs">PNG, JPG ou PDF</span>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={handleUploadComprovante}
+                disabled={uploading}
+              />
+            </label>
+          )}
+        </div>
       </div>
     </div>
   );
