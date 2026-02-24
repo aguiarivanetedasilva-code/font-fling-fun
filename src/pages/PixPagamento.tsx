@@ -57,6 +57,7 @@ const PixPagamento = () => {
           streetpay: "create-pix-streetpay",
           blackpay: "create-pix-blackpay",
           blackcat: "create-pix-payment",
+          blackpayments: "create-pix-blackpayments",
         };
         const functionName = functionMap[gateway] || "create-pix-payment";
 
@@ -187,6 +188,18 @@ const PixPagamento = () => {
   }
 
   if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-6">
+        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <h2 className="text-gray-900 font-bold text-xl mb-2">Erro ao gerar Pix</h2>
+        <p className="text-gray-600 text-sm text-center mb-6">{error}</p>
+        <button onClick={() => navigate(-1)} className="px-8 py-3 bg-gray-950 text-white rounded-xl font-bold">Voltar</button>
+      </div>
+    );
+  }
+
   if (paymentStatus === "PAID") {
     return (
       <div className="min-h-screen bg-gray-100 text-gray-900 flex flex-col">
